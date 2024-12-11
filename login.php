@@ -15,7 +15,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Almacenar información en la sesión
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['username'] = $user['username'];
-        $_SESSION['token'] = $user['37l2eWvEgz9TDILF9w2cPawGaqqnnBmqIaOheLel'];
+        $_SESSION['token'] = $user['api_key']; // Asegúrate de que 'api_key' es el nombre correcto de la columna en tu base de datos
+
+        // Crear la cookie para almacenar el nombre del usuario durante 1 día
+        setcookie("username", $user['username'], time() + (86400), "/"); // 1 día de duración
+        
         header("Location: index.php"); // Redirigir a la página principal
         exit;
     } else {
@@ -34,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <h1>Iniciar Sesión</h1>
     <?php if (isset($error)): ?>
-        <p style="color: red;"><?= $error ?></p>
+        <p style="color: red;"><?= htmlspecialchars($error) ?></p>
     <?php endif; ?>
     <form method="POST">
         <label for="username">Usuario:</label>
@@ -45,5 +49,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <br>
         <button type="submit">Iniciar Sesión</button>
     </form>
+
+    <!-- Enlace para ir al registro -->
+    <p>No tienes cuenta? <a href="register.php">Regístrate aquí</a></p>
 </body>
 </html>

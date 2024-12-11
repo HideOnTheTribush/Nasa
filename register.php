@@ -9,17 +9,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'];
     $token = $_POST['token'] ?? ''; // Token opcional
 
-    // Validar que el nombre de usuario no esté vacío
+    // Validar que el nombre de usuario y la contraseña no estén vacíos
     if (empty($username) || empty($password)) {
         $error = "El nombre de usuario y la contraseña son obligatorios.";
     } else {
-        // Verificar que el nombre de usuario no exista ya en la base de datos
+        // Verificar si el nombre de usuario ya existe en la base de datos
         $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ?");
         $stmt->execute([$username]);
         $existingUser = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($existingUser) {
-            $error = "El nombre de usuario ya existe. Elige otro.";
+            $error = "El nombre de usuario ya existe. Por favor, elige otro.";
         } else {
             // Cifrar la contraseña
             $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
@@ -28,8 +28,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt = $pdo->prepare("INSERT INTO users (username, password, token) VALUES (?, ?, ?)");
             $stmt->execute([$username, $hashedPassword, $token]);
 
+            // Mensaje de éxito y redirección al login
             $_SESSION['success'] = "Usuario registrado con éxito. Ahora puedes iniciar sesión.";
-            header("Location: login.php"); // Redirigir a la página de login
+            header("Location: login.php");
             exit;
         }
     }
@@ -46,8 +47,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <h1>Registro de Nuevo Usuario</h1>
 
+    <!-- Mensaje de error si algo falla -->
     <?php if (isset($error)): ?>
-        <p style="color: red;"><?= $error ?></p>
+        <p style="color: red;"><?= htmlspecialchars($error) ?></p>
     <?php endif; ?>
 
     <form method="POST">
@@ -66,6 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <button type="submit">Registrar</button>
     </form>
 
+    <!-- Enlace para volver al login -->
     <p>¿Ya tienes cuenta? <a href="login.php">Inicia sesión</a></p>
 </body>
 </html>
