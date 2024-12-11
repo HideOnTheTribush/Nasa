@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Almacenar información en la sesión
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['username'] = $user['username'];
-        $_SESSION['token'] = $user['token'];
+        $_SESSION['token'] = $user['37l2eWvEgz9TDILF9w2cPawGaqqnnBmqIaOheLel'];
         header("Location: index.php"); // Redirigir a la página principal
         exit;
     } else {
